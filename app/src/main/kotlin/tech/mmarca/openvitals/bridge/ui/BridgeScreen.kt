@@ -51,7 +51,7 @@ fun BridgeScreen(state: BridgeUiState, actions: BridgeActions) {
 @Composable
 private fun Header(state: BridgeUiState, actions: BridgeActions) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("OpenVitals Bridge", style = MaterialTheme.typography.headlineSmall)
+        Text("OpenBridge", style = MaterialTheme.typography.headlineSmall)
         if (state.build == null) {
             Text("No OpenVitals with the data sharing API is installed. Install a debug build of OpenVitals, then come back.")
             return@Column
