@@ -1,6 +1,6 @@
-# OpenVitals Bridge
+# OpenBridge
 
-OpenVitals is offline: it has no internet permission. OpenVitals Bridge is a separate app that reads the data OpenVitals shares and can reach the internet, so it can pass that data on to other services. No service is connected yet.
+OpenVitals is offline: it has no internet permission. OpenBridge is a separate app, published by [Hale](https://hale.ngo) like OpenVitals, that reads the data OpenVitals shares and can reach the internet, so it can pass that data on to other services. No service is connected yet.
 
 ## How it gets data
 
@@ -27,13 +27,13 @@ Install OpenVitals before the bridge. Android may not offer a permission that an
 
 ## Code
 
-- `openvitals/OpenVitalsApi.kt`: the API's names, copied from `sharing/contract/DataSharingContract.kt` in the mobile-app repo. Keep the two in step.
+- `openvitals/OpenVitalsApi.kt`: the API's names, copied from `sharing/contract/DataSharingContract.kt` in the [android-app](https://github.com/Hale-MTU/android-app) repository. Keep the two in step.
 - `openvitals/OpenVitalsReader.kt`: finds the installed build and reads any table into rows.
 - `ui/`: one screen and its ViewModel.
 
 ## Build
 
-Same toolchain as the mobile-app repo:
+Same toolchain as the [android-app](https://github.com/Hale-MTU/android-app) repository:
 
 ```
 export JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk LC_ALL=en_US.utf8
@@ -42,4 +42,4 @@ export JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk LC_ALL=e
 
 ## License
 
-The OpenVitals Bridge is licensed under the [`GNU Affero General Public License v3.0 or later`](LICENSE).
+OpenBridge is licensed under the [`GNU Affero General Public License v3.0 or later`](LICENSE).

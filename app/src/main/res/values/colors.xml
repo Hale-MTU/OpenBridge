@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Hale palette, named for what each colour paints in the launcher icon. -->
+    <color name="ic_launcher_background">#CFE6EC</color>
+    <color name="ic_launcher_disc">#006E8F</color>
+    <color name="ic_launcher_wave">#CFE6EC</color>
+    <color name="ic_launcher_dot">#E0735A</color>
+    <color name="ic_launcher_arch">#1F4E5F</color>
+</resources>
