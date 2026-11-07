@@ -27,13 +27,13 @@ Install OpenVitals before the bridge. Android may not offer a permission that an
 
 ## Code
 
-- `openvitals/OpenVitalsApi.kt`: the API's names, copied from `sharing/contract/DataSharingContract.kt` in the [android-app](https://github.com/Hale-MTU/android-app) repository. Keep the two in step.
+- `openvitals/OpenVitalsApi.kt`: the API's names, copied from `sharing/contract/DataSharingContract.kt` in the [OpenVitals](https://github.com/Hale-MTU/OpenVitals) repository. Keep the two in step.
 - `openvitals/OpenVitalsReader.kt`: finds the installed build and reads any table into rows.
 - `ui/`: one screen and its ViewModel.
 
 ## Build
 
-Same toolchain as the [android-app](https://github.com/Hale-MTU/android-app) repository:
+Same toolchain as the [OpenVitals](https://github.com/Hale-MTU/OpenVitals) repository:
 
 ```
 export JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk LC_ALL=en_US.utf8
