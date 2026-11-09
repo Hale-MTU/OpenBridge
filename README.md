@@ -43,3 +43,7 @@ export JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk LC_ALL=e
 ## License
 
 OpenBridge is licensed under the [`GNU Affero General Public License v3.0 or later`](LICENSE).
+
+## Wiki
+
+The [wiki](https://github.com/Hale-MTU/OpenBridge/wiki) mirrors this repository's Markdown on every push to `main` (`.github/workflows/wiki.yml`, `scripts/sync-wiki.py`, the same script as in OpenVitals, OpenWatch and OpenLink). Edit the files here; the wiki is overwritten. `python3 scripts/sync-wiki.py --repo Hale-MTU/OpenBridge --check` fails on a relative link to a file that does not exist.
