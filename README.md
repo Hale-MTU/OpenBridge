@@ -55,7 +55,7 @@ The sign-in comes back to `<application id>://vertmatch/callback`, so VertMatch 
 
 ## OpenVitals builds
 
-Each OpenVitals build names its permissions and its provider after its own application id: `tech.mmarca.openvitals`, `.debug` or `.ci`. The bridge asks for all three and reads from whichever is installed; with more than one, it lets you choose. The sharing API is only in debug and ci builds of OpenVitals for now, and a workout's FIT file needs an OpenVitals that serves it.
+Each OpenVitals build names its permissions and its provider after its own application id: `tech.mmarca.openvitals`, `.debug` or `.ci`. The bridge asks for all three and reads from whichever is installed; with more than one, it lets you choose. The sharing API is in OpenVitals' nightly builds, and in its releases after 2.17.0. A workout's FIT file comes from the same builds.
 
 Install OpenVitals before the bridge. Android may not offer a permission that another app defined after the bridge was installed; reinstall the bridge if a group never shows a dialog.
 
