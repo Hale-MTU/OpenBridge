@@ -1,0 +1,1 @@
+Send what OpenVitals shares to the services you connect.

@@ -30,6 +30,42 @@ val vertMatchClientId = buildSetting("openbridge.vertmatch.clientId", "OPENBRIDG
 val vertMatchRefreshTokens =
     buildSetting("openbridge.vertmatch.refreshTokens", "OPENBRIDGE_VERTMATCH_REFRESH_TOKENS").toBoolean()
 
+// The version. scripts/release.sh rewrites these two lines, and the release pipeline reads
+// them (scripts/ci-release-context.sh). A nightly overrides both from the environment: its
+// versionCode is the next free one of the counter (scripts/version-code.sh).
+val baseVersionCode = 1
+val baseVersionName = "0.1.0"
+val versionCodeOverride = providers.environmentVariable("OPENBRIDGE_VERSION_CODE")
+    .map { it.toInt() }
+val versionNameOverride = providers.environmentVariable("OPENBRIDGE_VERSION_NAME")
+val nightlyVersionNameSuffix = versionNameOverride
+    .map { "" }
+    .orElse("-nightly")
+
+// Release signing comes from the environment, so no key is ever in the repository. Without
+// it, release and nightly builds are unsigned and a debug build takes the debug key.
+val releaseStoreFilePath = System.getenv("OPENBRIDGE_RELEASE_STORE_FILE")
+val releaseStorePassword = System.getenv("OPENBRIDGE_RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = System.getenv("OPENBRIDGE_RELEASE_KEY_ALIAS")
+val releaseKeyPassword = System.getenv("OPENBRIDGE_RELEASE_KEY_PASSWORD")
+// A PKCS12 store has one password for the store and its keys.
+val isPkcs12ReleaseStore = releaseStoreFilePath
+    ?.lowercase()
+    ?.let { it.endsWith(".p12") || it.endsWith(".pfx") || it.endsWith(".pkcs12") }
+    ?: false
+val effectiveReleaseKeyPassword = if (isPkcs12ReleaseStore) releaseStorePassword else releaseKeyPassword
+val hasReleaseSigning = listOf(
+    releaseStoreFilePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    effectiveReleaseKeyPassword,
+).all { !it.isNullOrBlank() }
+
+// The release pipeline publishes a debug APK beside the release one, signed with the release
+// key and not debuggable, since it is public.
+val signDebugWithReleaseKey = System.getenv("OPENBRIDGE_SIGN_DEBUG_WITH_RELEASE_KEY") == "true"
+val publishedDebugApk = System.getenv("OPENBRIDGE_PUBLISHED_DEBUG_APK") == "true"
+
 android {
     namespace = "tech.mmarca.openvitals.bridge"
     compileSdk = 37
@@ -39,19 +75,46 @@ android {
         applicationId = "tech.mmarca.openvitals.bridge"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = versionCodeOverride.orElse(baseVersionCode).get()
+        versionName = versionNameOverride.orElse(baseVersionName).get()
         buildConfigField("String", "VERTMATCH_CLIENT_ID", "\"$vertMatchClientId\"")
         buildConfigField("boolean", "VERTMATCH_REFRESH_TOKENS", vertMatchRefreshTokens.toString())
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(checkNotNull(releaseStoreFilePath))
+                storePassword = checkNotNull(releaseStorePassword)
+                keyAlias = checkNotNull(releaseKeyAlias)
+                keyPassword = checkNotNull(effectiveReleaseKeyPassword)
+            }
+        }
     }
 
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+            if (signDebugWithReleaseKey && hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            if (publishedDebugApk) {
+                isDebuggable = false
+            }
         }
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
+        }
+        // The nightly: the release build under a version name that says so. It has the
+        // release's application id, so it updates in place and shares its VertMatch redirect.
+        create("nightly") {
+            initWith(getByName("release"))
+            versionNameSuffix = nightlyVersionNameSuffix.get()
+            matchingFallbacks += listOf("release")
         }
     }
 
