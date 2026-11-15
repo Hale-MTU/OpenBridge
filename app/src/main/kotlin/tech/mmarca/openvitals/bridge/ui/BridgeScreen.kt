@@ -55,7 +55,7 @@ private fun Header(state: BridgeUiState, actions: BridgeActions) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("OpenBridge", style = MaterialTheme.typography.headlineSmall)
         if (state.build == null) {
-            Text("No OpenVitals with the data sharing API is installed. Install a debug build of OpenVitals, then come back.")
+            Text("No OpenVitals with the data sharing API is installed. Install or update OpenVitals, then come back.")
             return@Column
         }
         if (state.builds.size > 1) {
