@@ -74,7 +74,12 @@ Same toolchain as the [OpenVitals](https://github.com/Hale-MTU/OpenVitals) repos
 ```
 export JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk LC_ALL=en_US.utf8
 ./gradlew :app:assembleDebug :app:testDebugUnitTest :vertmatch:test
+./gradlew verifyCi    # the whole gate: tests, the debug build, lint
 ```
+
+## Releases
+
+Nightly and versioned builds are signed and published to [GitHub releases](https://github.com/Hale-MTU/OpenBridge/releases) by the same pipeline as OpenVitals and OpenWatch: a gate on every pull request and push (`./gradlew verifyCi` locally), a nightly at 01:00 UTC, and a version for each `vX.Y.Z` tag, approved before it becomes the stable release. [docs/releasing.md](docs/releasing.md) has the steps, the version code counter, and the secrets and variables the repository needs.
 
 ## License
 

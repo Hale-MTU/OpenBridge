@@ -1,0 +1,26 @@
+OpenBridge passes data from OpenVitals to a service you connect. OpenVitals is offline: it has no internet permission. OpenBridge is the separate app that can reach the internet, so OpenVitals never has to.
+
+Nothing is sent until you connect a service and tell OpenBridge to send. There is no OpenBridge account, no ads and no analytics.
+
+How it works
+
+- In OpenVitals, turn on Settings, Share with other apps.
+- In OpenBridge, allow the kinds of data you want it to read. Android asks you about each one on its own: activity, workouts, workout routes, sleep, heart, vitals, body, nutrition, recovery, cycle and sexual activity.
+- Connect a service and choose what to send.
+
+VertMatch
+
+VertMatch is a training service for runners. With OpenBridge you can:
+
+- send a workout from OpenVitals to your VertMatch training, with its route if you allow routes;
+- see your goal race and, with VertMatch Premium, your training load for the last seven days;
+- delete a workout in OpenVitals and have it deleted on VertMatch too;
+- disconnect at any time, which removes the sign-in from your phone.
+
+A workout goes only when you tap Send on it.
+
+Privacy
+
+OpenBridge reads only the data groups you allow and keeps no copy of your health data. Your sign-in to a service is encrypted on your phone. What is sent and received is listed at https://docs.hale.ngo/openbridge/privacy
+
+OpenBridge needs OpenVitals. It is free software under the AGPL-3.0-or-later licence, published by Hale, a non-profit association in Estonia. Source code: https://github.com/Hale-MTU/OpenBridge

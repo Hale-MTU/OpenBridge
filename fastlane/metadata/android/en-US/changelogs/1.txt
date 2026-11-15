@@ -1,0 +1,1 @@
+First release. Connect VertMatch, send a workout from OpenVitals to your VertMatch training, and see your training summary.
