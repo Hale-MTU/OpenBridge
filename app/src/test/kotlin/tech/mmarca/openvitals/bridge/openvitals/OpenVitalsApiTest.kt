@@ -31,6 +31,12 @@ class OpenVitalsApiTest {
     }
 
     @Test
+    fun `a workout's FIT file says whether it wants the route`() {
+        assertThat(OpenVitalsPaths.workoutFit("a/b", withRoute = true)).isEqualTo("workouts/sessions/a%2Fb/fit?route=true")
+        assertThat(OpenVitalsPaths.workoutFit("abc", withRoute = false)).isEqualTo("workouts/sessions/abc/fit?route=false")
+    }
+
+    @Test
     fun `every group but routes has daily and sample tables`() {
         assertThat(OpenVitalsGroup.entries.filterNot { it.hasDailyAndSamples }).containsExactly(OpenVitalsGroup.ROUTES)
         assertThat(OpenVitalsGroup.entries.filter { it.hasSessions })

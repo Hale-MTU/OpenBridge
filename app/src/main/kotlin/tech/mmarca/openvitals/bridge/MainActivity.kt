@@ -24,6 +24,7 @@ import tech.mmarca.openvitals.bridge.openvitals.OpenVitalsApi
 import tech.mmarca.openvitals.bridge.ui.BridgeActions
 import tech.mmarca.openvitals.bridge.ui.BridgeScreen
 import tech.mmarca.openvitals.bridge.ui.BridgeViewModel
+import tech.mmarca.openvitals.bridge.vertmatch.VertMatchActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
                                 onRead = viewModel::readGroup,
                                 onReadAll = viewModel::readAll,
                                 onOpenSharingSettings = { openSharingSettings(state.build?.packageName) },
+                                onOpenVertMatch = { startActivity(Intent(this@MainActivity, VertMatchActivity::class.java)) },
                             ),
                         )
                     }

@@ -5,6 +5,10 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -35,6 +39,20 @@ sealed interface ReadResult {
 
     /** No such provider: OpenVitals is missing, or it is a build without the sharing API. */
     data object Unavailable : ReadResult
+}
+
+/** How opening one file went. */
+sealed interface FileResult {
+    class Read(val bytes: ByteArray) : FileResult
+
+    /** The user has not allowed this group to the bridge. */
+    data object Denied : FileResult
+
+    /** OpenVitals had no file to give; [status] is its reason, such as `sharing_off` or `not_found`. */
+    data class Failed(val status: String?) : FileResult
+
+    /** No such provider: OpenVitals is missing, or it is a build without the sharing API. */
+    data object Unavailable : FileResult
 }
 
 /** Everything read for one group. [results] is keyed by a short label such as "daily". */
@@ -71,6 +89,28 @@ class OpenVitalsReader(private val context: Context) {
             ReadResult.Failed(error.message ?: "Bad query")
         } catch (error: Exception) {
             ReadResult.Failed(error.message ?: error.javaClass.simpleName)
+        }
+    }
+
+    /**
+     * Opens a file path, such as a workout's FIT file. OpenVitals refuses with a message that
+     * starts with a status and a colon; only the status is kept.
+     */
+    suspend fun readFile(build: OpenVitalsBuild, path: String): FileResult = withContext(Dispatchers.IO) {
+        val uri = "content://${OpenVitalsApi.authority(build.packageName)}/$path".toUri()
+        try {
+            val stream = context.contentResolver.openInputStream(uri) ?: return@withContext FileResult.Unavailable
+            val bytes = stream.use { it.readUpTo(OpenVitalsApi.MAX_FILE_BYTES + 1) }
+            if (bytes.size > OpenVitalsApi.MAX_FILE_BYTES) FileResult.Failed("file_too_large") else FileResult.Read(bytes)
+        } catch (_: SecurityException) {
+            FileResult.Denied
+        } catch (error: FileNotFoundException) {
+            FileResult.Failed(statusOf(error.message))
+        } catch (_: IOException) {
+            FileResult.Failed(null)
+        } catch (_: IllegalArgumentException) {
+            // An OpenVitals without this path, or without the provider at all.
+            FileResult.Unavailable
         }
     }
 
@@ -114,6 +154,22 @@ class OpenVitalsReader(private val context: Context) {
         if (ids.isEmpty()) return mapOf("routes" to ReadResult.Read(Table(emptyList(), emptyList(), table.status, null)))
         return ids.associate { id -> "route $id" to read(build, OpenVitalsPaths.route(id)) }
     }
+
+    /** The first [limit] bytes, or all of them when there are fewer. */
+    private fun InputStream.readUpTo(limit: Int): ByteArray {
+        val out = ByteArrayOutputStream()
+        val buffer = ByteArray(64 * 1024)
+        while (out.size() < limit) {
+            val read = read(buffer, 0, minOf(buffer.size, limit - out.size()))
+            if (read < 0) break
+            out.write(buffer, 0, read)
+        }
+        return out.toByteArray()
+    }
+
+    /** `sharing_off: sharing is turned off` gives `sharing_off`; anything else gives null. */
+    private fun statusOf(message: String?): String? =
+        message?.substringBefore(':', "")?.takeIf { it.isNotEmpty() && it.all { c -> c.isLowerCase() || c == '_' } }
 
     private fun Cursor.toTable(): Table {
         val names = columnNames.toList()

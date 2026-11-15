@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "OpenVitalsBridge"
 include(":app")
+include(":vertmatch")

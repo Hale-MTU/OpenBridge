@@ -32,6 +32,7 @@ class BridgeActions(
     val onRead: (OpenVitalsGroup) -> Unit,
     val onReadAll: () -> Unit,
     val onOpenSharingSettings: () -> Unit,
+    val onOpenVertMatch: () -> Unit,
 )
 
 @Composable
@@ -42,6 +43,7 @@ fun BridgeScreen(state: BridgeUiState, actions: BridgeActions) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         item { Header(state, actions) }
+        item { ServicesCard(actions) }
         if (state.build != null) {
             items(state.groups, key = { it.group.name }) { group -> GroupCard(group, actions) }
         }
@@ -78,6 +80,18 @@ private fun Header(state: BridgeUiState, actions: BridgeActions) {
         }
         TextButton(onClick = actions.onOpenSharingSettings) { Text("Open OpenVitals sharing settings") }
         if (state.busy) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    }
+}
+
+/** The services the bridge can pass data on to. Each has a screen of its own. */
+@Composable
+private fun ServicesCard(actions: BridgeActions) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("Services", style = MaterialTheme.typography.titleMedium)
+            Text("VertMatch: send a workout to your training, and see your training summary.")
+            OutlinedButton(onClick = actions.onOpenVertMatch) { Text("Open VertMatch") }
+        }
     }
 }
 
