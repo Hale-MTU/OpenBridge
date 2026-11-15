@@ -18,6 +18,15 @@ object OpenVitalsApi {
     const val EXTRA_STATUS = "status"
     const val EXTRA_HISTORY_START = "history_start"
 
+    /** Every read ran: an empty answer means there is nothing, not that something failed. */
+    const val STATUS_OK = "ok"
+
+    /** A status only a file answer gives: no workout has this id. */
+    const val STATUS_NOT_FOUND = "not_found"
+
+    /** The largest file the bridge reads: VertMatch's limit for a FIT file. */
+    const val MAX_FILE_BYTES = 25 * 1024 * 1024
+
     /** The API's longest daily and session range, both days counted. */
     const val MAX_RANGE_DAYS = 366L
 
@@ -77,6 +86,14 @@ object OpenVitalsPaths {
     fun session(group: OpenVitalsGroup, sessionId: String): String = "${group.path}/sessions/${segment(sessionId)}"
 
     fun splits(sessionId: String): String = "${OpenVitalsGroup.WORKOUTS.path}/sessions/${segment(sessionId)}/splits"
+
+    /**
+     * A recorded workout as a FIT file, the one OpenVitals' own "Save as FIT" writes. A file,
+     * not a table: open it, do not query it. [withRoute] adds the GPS track and needs the routes
+     * group as well.
+     */
+    fun workoutFit(sessionId: String, withRoute: Boolean): String =
+        "${OpenVitalsGroup.WORKOUTS.path}/sessions/${segment(sessionId)}/fit?route=$withRoute"
 
     fun route(sessionId: String): String = "${OpenVitalsGroup.ROUTES.path}/${segment(sessionId)}"
 

@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tech.mmarca.openvitals.bridge.BridgeApp
 import tech.mmarca.openvitals.bridge.openvitals.GroupReading
 import tech.mmarca.openvitals.bridge.openvitals.OpenVitalsBuild
 import tech.mmarca.openvitals.bridge.openvitals.OpenVitalsGroup
 import tech.mmarca.openvitals.bridge.openvitals.OpenVitalsPaths
-import tech.mmarca.openvitals.bridge.openvitals.OpenVitalsReader
 import tech.mmarca.openvitals.bridge.openvitals.ReadResult
 
 /** A group as `/groups` and Android report it. */
@@ -33,7 +33,7 @@ data class BridgeUiState(
 )
 
 class BridgeViewModel(application: Application) : AndroidViewModel(application) {
-    private val reader = OpenVitalsReader(application)
+    private val reader = (application as BridgeApp).reader
 
     private val _state = MutableStateFlow(BridgeUiState())
     val state: StateFlow<BridgeUiState> = _state.asStateFlow()
